@@ -1,49 +1,49 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
-import { useScrolled } from '@/composables/useScrolled'
-import AppLogo from './AppLogo.vue'
-import ThemeToggle from './ThemeToggle.vue'
+import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { RouterLink, useRoute } from "vue-router";
+import { useScrolled } from "@/composables/useScrolled";
+import AppLogo from "./AppLogo.vue";
+import ThemeToggle from "./ThemeToggle.vue";
 
 const links = [
-  { to: '/fonts', label: 'Fuentes' },
-  { to: '/word-counter', label: 'Contador' },
-  { to: '/converter', label: 'Conversor' },
-]
+  { to: "/fonts", label: "Fuentes" },
+  { to: "/word-counter", label: "Contador" },
+  { to: "/converter", label: "Conversor" },
+];
 
-const { scrolled: isCondensed } = useScrolled(16)
-const route = useRoute()
-const isMenuOpen = ref(false)
-const menuButton = ref<HTMLButtonElement | null>(null)
+const { scrolled: isCondensed } = useScrolled(16);
+const route = useRoute();
+const isMenuOpen = ref(false);
+const menuButton = ref<HTMLButtonElement | null>(null);
 
 function closeMenu() {
-  isMenuOpen.value = false
+  isMenuOpen.value = false;
 }
 
 function toggleMenu() {
-  isMenuOpen.value = !isMenuOpen.value
+  isMenuOpen.value = !isMenuOpen.value;
 }
 
 // Escape cierra el menú y devuelve el foco al botón que lo abrió.
 function handleKeydown(event: KeyboardEvent) {
-  if (event.key !== 'Escape' || !isMenuOpen.value) return
-  closeMenu()
-  menuButton.value?.focus()
+  if (event.key !== "Escape" || !isMenuOpen.value) return;
+  closeMenu();
+  menuButton.value?.focus();
 }
 
 // El menú solo existe en móvil: si la ventana se ensancha, se cierra.
 // Debe coincidir con el breakpoint de la media query del final.
-const desktopQuery = window.matchMedia('(min-width: 641px)')
+const desktopQuery = window.matchMedia("(min-width: 641px)");
 
-watch(() => route.fullPath, closeMenu)
+watch(() => route.fullPath, closeMenu);
 onMounted(() => {
-  window.addEventListener('keydown', handleKeydown)
-  desktopQuery.addEventListener('change', closeMenu)
-})
+  window.addEventListener("keydown", handleKeydown);
+  desktopQuery.addEventListener("change", closeMenu);
+});
 onBeforeUnmount(() => {
-  window.removeEventListener('keydown', handleKeydown)
-  desktopQuery.removeEventListener('change', closeMenu)
-})
+  window.removeEventListener("keydown", handleKeydown);
+  desktopQuery.removeEventListener("change", closeMenu);
+});
 </script>
 
 <template>
@@ -52,12 +52,21 @@ onBeforeUnmount(() => {
     :class="{ 'is-condensed': isCondensed, 'is-menu-open': isMenuOpen }"
   >
     <div class="site-header__bar">
-      <RouterLink to="/" class="site-header__brand" aria-label="WeLoveFonts, inicio">
+      <RouterLink
+        to="/"
+        class="site-header__brand"
+        aria-label="WeLoveFonts, inicio"
+      >
         <AppLogo :size="30" />
       </RouterLink>
 
       <nav class="site-header__nav" aria-label="Herramientas">
-        <RouterLink v-for="link in links" :key="link.to" :to="link.to" class="nav-link">
+        <RouterLink
+          v-for="link in links"
+          :key="link.to"
+          :to="link.to"
+          class="nav-link"
+        >
           {{ link.label }}
         </RouterLink>
       </nav>
@@ -81,7 +90,12 @@ onBeforeUnmount(() => {
 
     <!-- Menú móvil: se despliega bajo la barra, sin cambiar su estructura -->
     <Transition name="menu">
-      <nav v-if="isMenuOpen" id="mobile-menu" class="mobile-menu" aria-label="Herramientas">
+      <nav
+        v-if="isMenuOpen"
+        id="mobile-menu"
+        class="mobile-menu"
+        aria-label="Herramientas"
+      >
         <RouterLink
           v-for="link in links"
           :key="link.to"
@@ -94,7 +108,12 @@ onBeforeUnmount(() => {
       </nav>
     </Transition>
     <Transition name="scrim">
-      <div v-if="isMenuOpen" class="mobile-scrim" aria-hidden="true" @click="closeMenu"></div>
+      <div
+        v-if="isMenuOpen"
+        class="mobile-scrim"
+        aria-hidden="true"
+        @click="closeMenu"
+      ></div>
     </Transition>
   </header>
 </template>
@@ -122,7 +141,7 @@ onBeforeUnmount(() => {
  * dentro de la cabecera en lugar de cubrir la página.
  */
 .site-header::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -184,7 +203,7 @@ onBeforeUnmount(() => {
 }
 
 .nav-link::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: auto 0 0;
   height: 1px;
@@ -198,11 +217,11 @@ onBeforeUnmount(() => {
   color: var(--ink);
 }
 
-.nav-link[aria-current='page'] {
+.nav-link[aria-current="page"] {
   color: var(--ink);
 }
 
-.nav-link[aria-current='page']::after {
+.nav-link[aria-current="page"]::after {
   transform: scaleX(1);
 }
 
@@ -287,12 +306,15 @@ onBeforeUnmount(() => {
 }
 
 .mobile-menu__link:hover,
-.mobile-menu__link[aria-current='page'] {
+.mobile-menu__link[aria-current="page"] {
   color: var(--ink);
 }
 
-.mobile-menu__link[aria-current='page'] {
+.mobile-menu__link[aria-current="page"] {
   font-style: italic;
+  font-weight: bold;
+  letter-spacing: .03rem;
+
 }
 
 .mobile-scrim {

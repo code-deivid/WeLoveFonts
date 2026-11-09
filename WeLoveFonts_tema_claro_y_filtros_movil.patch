@@ -1,0 +1,117 @@
+--- a/index.html
++++ b/index.html
+@@ -4,7 +4,7 @@
+     <meta charset="UTF-8" />
+     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+-    <meta name="theme-color" content="#0A0A0A" />
++    <meta name="theme-color" content="#FAFAFA" />
+ 
+     <!-- SEO -->
+     <title>WeLoveFonts — Herramientas de texto diseñadas para creadores</title>
+@@ -41,11 +41,14 @@
+         try {
+           stored = localStorage.getItem('wlf-theme')
+         } catch (error) {}
+-        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+-        var theme =
+-          stored === 'dark' || stored === 'light' ? stored : prefersDark ? 'dark' : 'light'
++        // Primera visita: modo claro. La elección explícita se conserva al volver.
++        var theme = stored === 'dark' || stored === 'light' ? stored : 'light'
+         document.documentElement.dataset.theme = theme
+         document.documentElement.style.colorScheme = theme
++        document.querySelector('meta[name="theme-color"]').setAttribute(
++          'content',
++          theme === 'dark' ? '#0A0A0A' : '#FAFAFA',
++        )
+       })()
+     </script>
+ 
+--- a/src/composables/useTheme.ts
++++ b/src/composables/useTheme.ts
+@@ -8,8 +8,8 @@
+ 
+ /*
+  * Si index.html aplicó el tema antes del primer pintado, respetamos ese valor.
+- * Si no, recuperamos la preferencia guardada o la del sistema. De esta forma
+- * el botón funciona también cuando no existe el script inicial en index.html.
++ * Si no, recuperamos la preferencia guardada o usamos el modo claro.
++ * Así la primera visita siempre empieza en claro, incluso si el sistema es oscuro.
+  */
+ function readInitialTheme(): Theme {
+   const savedTheme = readStorage(THEME_STORAGE_KEY)
+@@ -18,13 +18,17 @@
+   const appliedTheme = document.documentElement.dataset.theme
+   if (appliedTheme === 'light' || appliedTheme === 'dark') return appliedTheme
+ 
+-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
++  return 'light'
+ }
+ 
+ function applyTheme(nextTheme: Theme): void {
+   const root = document.documentElement
+   root.dataset.theme = nextTheme
+   root.style.colorScheme = nextTheme
++  document.querySelector('meta[name="theme-color"]')?.setAttribute(
++    'content',
++    nextTheme === 'dark' ? '#0A0A0A' : '#FAFAFA',
++  )
+ }
+ 
+ const theme = ref<Theme>(readInitialTheme())
+@@ -34,8 +38,7 @@
+   function toggleTheme() {
+     theme.value = theme.value === 'light' ? 'dark' : 'light'
+     applyTheme(theme.value)
+-    // Solo se guarda una elección explícita del usuario: si nunca cambia el tema,
+-    // la web sigue la preferencia del sistema.
++    // Guardamos únicamente las elecciones explícitas del usuario.
+     writeStorage(THEME_STORAGE_KEY, theme.value)
+   }
+ 
+--- a/src/views/FontsView.vue
++++ b/src/views/FontsView.vue
+@@ -120,7 +120,7 @@
+         </div>
+       </div>
+ 
+-      <div class="cats">
++      <div class="cats" role="group" aria-label="Filtrar por categoría">
+         <button
+           v-for="category in categories"
+           :key="category.id"
+@@ -486,4 +486,34 @@
+     padding: 18px 20px;
+   }
+ }
++
++/* En móvil, los filtros forman una sola fila desplazable en lugar de
++   una cápsula de dos líneas con la última categoría aislada. */
++@media (max-width: 640px) {
++  .cats {
++    width: 100%;
++    max-width: 100%;
++    flex-wrap: nowrap;
++    justify-content: flex-start;
++    gap: 4px;
++    padding: 5px;
++    margin-top: 24px;
++    margin-bottom: 28px;
++    border-radius: 18px;
++    overflow-x: auto;
++    overflow-y: hidden;
++    overscroll-behavior-x: contain;
++    -webkit-overflow-scrolling: touch;
++    scrollbar-width: none;
++  }
++  .cats::-webkit-scrollbar {
++    display: none;
++  }
++  .cat {
++    flex: 0 0 auto;
++    min-height: 40px;
++    padding: 10px 14px;
++    white-space: nowrap;
++  }
++}
+ </style>
