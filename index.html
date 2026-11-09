@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0A0A0A" />
+
+    <!-- SEO -->
+    <title>WeLoveFonts — Herramientas de texto diseñadas para creadores</title>
+    <meta
+      name="description"
+      content="Suite premium de herramientas de texto: convierte fuentes Unicode, cuenta palabras, transforma mayúsculas y mucho más. Diseñado para creadores, escritores y diseñadores."
+    />
+    <meta name="author" content="DEiVid" />
+    <meta
+      name="keywords"
+      content="fuentes, unicode, contador palabras, conversor texto, herramientas creadores"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WeLoveFonts — Herramientas de texto para creadores" />
+    <meta
+      property="og:description"
+      content="Suite premium de herramientas de texto: fuentes Unicode, contador de palabras, conversor de mayúsculas y más."
+    />
+    <meta property="og:url" content="https://we-love-fonts.vercel.app/" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="WeLoveFonts — Herramientas de texto para creadores" />
+
+    <!--
+      Aplica el tema antes del primer pintado para evitar un destello del tema claro.
+      Usa la clave "wlf-theme" (THEME_STORAGE_KEY en src/composables/useTheme.ts).
+    -->
+    <script>
+      ;(function () {
+        var stored = null
+        try {
+          stored = localStorage.getItem('wlf-theme')
+        } catch (error) {}
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        var theme =
+          stored === 'dark' || stored === 'light' ? stored : prefersDark ? 'dark' : 'light'
+        document.documentElement.dataset.theme = theme
+        document.documentElement.style.colorScheme = theme
+      })()
+    </script>
+
+    <!-- Fonts: Geist (cuerpo) + Instrument Serif (display acentos) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
