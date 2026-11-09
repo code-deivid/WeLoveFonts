@@ -120,7 +120,7 @@ onBeforeUnmount(() => clearTimeout(focusTimer))
         </div>
       </div>
 
-      <div class="cats">
+      <div class="cats" role="group" aria-label="Filtrar por categoría">
         <button
           v-for="category in categories"
           :key="category.id"
@@ -484,6 +484,36 @@ onBeforeUnmount(() => clearTimeout(focusTimer))
   .composer-input {
     font-size: 1rem;
     padding: 18px 20px;
+  }
+}
+
+/* En móvil, los filtros forman una sola fila desplazable en lugar de
+   una cápsula de dos líneas con la última categoría aislada. */
+@media (max-width: 640px) {
+  .cats {
+    width: 100%;
+    max-width: 100%;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 5px;
+    margin-top: 24px;
+    margin-bottom: 28px;
+    border-radius: 18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .cats::-webkit-scrollbar {
+    display: none;
+  }
+  .cat {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding: 10px 14px;
+    white-space: nowrap;
   }
 }
 </style>
